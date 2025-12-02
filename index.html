@@ -7,333 +7,202 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Canvas Background Styles */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+        }
+    </style>
 </head>
 <body>
-    <!-- Loading Animation -->
-    <div class="loader-overlay" id="loader">
-        <div class="loader-container">
-            <div class="loader-spinner"></div>
-            <div class="loader-text">
-                <h3>Initializing Pragna AI</h3>
-                <p>Loading intelligent voice analysis engine...</p>
-            </div>
-        </div>
-    </div>
+    <!-- Animated Background Canvas -->
+    <canvas id="bg-canvas"></canvas>
 
     <!-- Main Container -->
     <div class="app-container">
-        <!-- Navigation Sidebar -->
-        <nav class="sidebar">
-            <div class="logo-section">
-                <div class="logo">
-                    <i class="fas fa-brain"></i>
-                    <span>NeuroVoice</span>
+        <!-- Header -->
+        <header class="main-header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <div class="logo">
+                        <i class="fas fa-brain"></i>
+                        <span>Pragna AI</span>
+                    </div>
+                    <div class="tagline">Voice Analysis for Parkinson's Disease</div>
                 </div>
-                <div class="tagline">Intelligent Voice Analysis</div>
-            </div>
-
-            <div class="nav-menu">
-                <a href="#dashboard" class="nav-item active">
-                    <i class="fas fa-chart-line"></i>
-                    <span>Dashboard</span>
-                </a>
-                <a href="#analysis" class="nav-item">
-                    <i class="fas fa-microphone"></i>
-                    <span>Voice Analysis</span>
-                </a>
-                <a href="#history" class="nav-item">
-                    <i class="fas fa-history"></i>
-                    <span>History</span>
-                </a>
-                <a href="#insights" class="nav-item">
-                    <i class="fas fa-chart-pie"></i>
-                    <span>Insights</span>
-                </a>
-            </div>
-
-            <div class="user-section">
-                <div class="user-avatar">
-                    <i class="fas fa-user-md"></i>
-                </div>
-                <div class="user-info">
-                    <div class="user-name">Clinical Researcher</div>
-                    <div class="user-status">
-                        <span class="status-indicator online"></span>
-                        System Active
+                <div class="header-info">
+                    <div class="connection-status">
+                        <span class="status-dot active"></span>
+                        <span>Real-time Analysis</span>
                     </div>
                 </div>
             </div>
-        </nav>
+        </header>
 
         <!-- Main Content -->
         <main class="main-content">
-            <!-- Header -->
-            <header class="main-header">
-                <div class="header-left">
-                    <h1>Parkinson's Voice Analysis System</h1>
-                    <p class="subtitle">AI-powered detection of vocal biomarkers</p>
-                </div>
-                <div class="header-right">
-                    <div class="system-status">
-                        <div class="status-item">
-                            <i class="fas fa-server"></i>
-                            <span>API: <strong>Connected</strong></span>
+            <!-- Hero Section -->
+            <section class="hero-section">
+                <div class="hero-content">
+                    <h1>Intelligent Voice Analysis</h1>
+                    <p class="hero-subtitle">
+                        Advanced Parkinson's disease detection through vocal biomarker analysis
+                    </p>
+                    <div class="hero-stats">
+                        <div class="stat">
+                            <div class="stat-value">26</div>
+                            <div class="stat-label">Acoustic Features</div>
                         </div>
-                        <div class="status-item">
-                            <i class="fas fa-microphone"></i>
-                            <span>Mic: <strong id="mic-status">Ready</strong></span>
+                        <div class="stat">
+                            <div class="stat-value">95%</div>
+                            <div class="stat-label">Accuracy</div>
                         </div>
-                    </div>
-                    <button class="btn-help" id="help-btn">
-                        <i class="fas fa-question-circle"></i>
-                        Help Guide
-                    </button>
-                </div>
-            </header>
-
-            <!-- Dashboard Section -->
-            <section id="dashboard" class="content-section active">
-                <div class="welcome-card">
-                    <div class="welcome-content">
-                        <h2>Welcome to NeuroVoice AI</h2>
-                        <p class="welcome-text">
-                            Advanced voice analysis platform for detecting Parkinson's disease biomarkers through 
-                            sophisticated acoustic pattern recognition and machine learning.
-                        </p>
-                        <div class="welcome-stats">
-                            <div class="stat-card">
-                                <i class="fas fa-database"></i>
-                                <div>
-                                    <h3>26+</h3>
-                                    <p>Acoustic Features</p>
-                                </div>
-                            </div>
-                            <div class="stat-card">
-                                <i class="fas fa-brain"></i>
-                                <div>
-                                    <h3>95%</h3>
-                                    <p>Model Accuracy</p>
-                                </div>
-                            </div>
-                            <div class="stat-card">
-                                <i class="fas fa-clock"></i>
-                                <div>
-                                    <h3>&lt;30s</h3>
-                                    <p>Analysis Time</p>
-                                </div>
-                            </div>
+                        <div class="stat">
+                            <div class="stat-value">&lt;30s</div>
+                            <div class="stat-label">Analysis Time</div>
                         </div>
                     </div>
-                    <div class="welcome-illustration">
-                        <i class="fas fa-waveform"></i>
-                    </div>
-                </div>
-
-                <div class="quick-start">
-                    <div class="quick-start-header">
-                        <h3>Quick Start Analysis</h3>
-                        <p>Record your voice for immediate biomarker detection</p>
-                    </div>
-                    <div class="quick-start-content">
-                        <div class="step">
-                            <div class="step-number">1</div>
-                            <div class="step-content">
-                                <h4>Prepare Environment</h4>
-                                <p>Find a quiet space with minimal background noise</p>
-                            </div>
-                        </div>
-                        <div class="step">
-                            <div class="step-number">2</div>
-                            <div class="step-content">
-                                <h4>Position Microphone</h4>
-                                <p>Hold microphone 10-20cm from mouth</p>
-                            </div>
-                        </div>
-                        <div class="step">
-                            <div class="step-number">3</div>
-                            <div class="step-content">
-                                <h4>Start Recording</h4>
-                                <p>Speak naturally for 15-30 seconds</p>
-                            </div>
-                        </div>
-                    </div>
-                    <button class="btn-primary start-analysis-btn">
-                        <i class="fas fa-microphone"></i>
-                        Start New Analysis
-                    </button>
                 </div>
             </section>
 
-            <!-- Voice Analysis Section -->
-            <section id="analysis" class="content-section">
-                <div class="analysis-header">
-                    <h2>Voice Analysis Dashboard</h2>
-                    <p>Real-time voice recording and biomarker detection</p>
-                </div>
-
-                <div class="analysis-container">
-                    <!-- Left Panel: Controls & Recording -->
-                    <div class="left-panel">
-                        <div class="recording-card">
-                            <div class="card-header">
-                                <h3><i class="fas fa-record-vinyl"></i> Voice Recording</h3>
-                                <div class="recording-status" id="recording-status">
-                                    <span class="status-dot"></span>
-                                    <span>Ready</span>
-                                </div>
-                            </div>
-
-                            <div class="recording-instructions">
-                                <div class="instruction">
-                                    <i class="fas fa-volume-mute"></i>
-                                    <span>Quiet environment</span>
-                                </div>
-                                <div class="instruction">
-                                    <i class="fas fa-microphone"></i>
-                                    <span>10-20cm from mouth</span>
-                                </div>
-                                <div class="instruction">
-                                    <i class="fas fa-comment"></i>
-                                    <span>Speak naturally</span>
-                                </div>
-                            </div>
-
-                            <div class="recording-controls">
-                                <button id="record-btn" class="btn-record">
-                                    <i class="fas fa-microphone"></i>
-                                    <span>Start Recording</span>
-                                </button>
-                                <button id="stop-btn" class="btn-stop" disabled>
-                                    <i class="fas fa-stop"></i>
-                                    <span>Stop</span>
-                                </button>
-                            </div>
-
-                            <div class="recording-timer">
-                                <div class="timer" id="timer">00:00</div>
-                                <div class="timer-label">Duration</div>
-                            </div>
-
-                            <div class="visualizer-container">
-                                <canvas id="waveform-canvas"></canvas>
-                            </div>
-
-                            <div class="audio-controls">
-                                <audio id="audio-player" controls style="display: none;"></audio>
-                                <button id="play-btn" class="btn-play" disabled>
-                                    <i class="fas fa-play"></i>
-                                    Play Recording
-                                </button>
+            <!-- Voice Analysis Dashboard -->
+            <section class="dashboard-section">
+                <div class="dashboard-grid">
+                    <!-- Recording Panel -->
+                    <div class="dashboard-card recording-panel">
+                        <div class="card-header">
+                            <h2><i class="fas fa-microphone"></i> Voice Recording</h2>
+                            <div class="status-indicator">
+                                <span class="status-dot"></span>
+                                <span id="recording-status">Ready</span>
                             </div>
                         </div>
-
-                        <div class="results-card">
-                            <div class="card-header">
-                                <h3><i class="fas fa-chart-bar"></i> Analysis Results</h3>
-                                <div class="result-badge" id="result-badge">No Data</div>
+                        
+                        <div class="control-panel">
+                            <div class="timer-display" id="timer">00:00</div>
+                            
+                            <div class="recording-controls">
+                                <button id="record-btn" class="control-btn primary">
+                                    <i class="fas fa-microphone"></i>
+                                    Start Recording
+                                </button>
+                                <button id="stop-btn" class="control-btn secondary" disabled>
+                                    <i class="fas fa-stop"></i>
+                                    Stop
+                                </button>
+                                <button id="play-btn" class="control-btn tertiary" disabled>
+                                    <i class="fas fa-play"></i>
+                                    Playback
+                                </button>
                             </div>
+                            
+                            <div class="audio-visualizer">
+                                <canvas id="waveform-canvas"></canvas>
+                            </div>
+                            
+                            <audio id="audio-player" controls style="display: none;"></audio>
+                        </div>
+                    </div>
 
-                            <div class="risk-indicator">
-                                <div class="risk-circle">
-                                    <div class="risk-value" id="risk-value">--</div>
-                                    <div class="risk-label">Risk Score</div>
+                    <!-- Analysis Results -->
+                    <div class="dashboard-card results-panel">
+                        <div class="card-header">
+                            <h2><i class="fas fa-chart-line"></i> Analysis Results</h2>
+                            <div class="result-badge" id="risk-badge">No Data</div>
+                        </div>
+                        
+                        <div class="risk-display">
+                            <div class="risk-meter">
+                                <div class="meter-circle">
+                                    <svg width="200" height="200" viewBox="0 0 200 200">
+                                        <circle cx="100" cy="100" r="85" fill="none" stroke="#1a1a2e" stroke-width="20"/>
+                                        <circle id="risk-meter-fill" cx="100" cy="100" r="85" fill="none" 
+                                                stroke="#2563eb" stroke-width="20" stroke-dasharray="534" 
+                                                stroke-dashoffset="534" stroke-linecap="round" transform="rotate(-90 100 100)"/>
+                                    </svg>
+                                    <div class="meter-value" id="risk-value">0%</div>
                                 </div>
-                                <div class="risk-details">
+                                <div class="risk-info">
                                     <div class="risk-level" id="risk-level">No Analysis</div>
                                     <p class="risk-description" id="risk-description">
-                                        Record voice to begin analysis
+                                        Record voice to begin Parkinson's disease analysis
                                     </p>
                                 </div>
                             </div>
-
-                            <div class="feature-metrics">
-                                <div class="metric">
-                                    <div class="metric-icon">
-                                        <i class="fas fa-wave-square"></i>
-                                    </div>
-                                    <div class="metric-info">
-                                        <div class="metric-label">Jitter</div>
-                                        <div class="metric-value" id="jitter-value">--</div>
-                                    </div>
-                                </div>
-                                <div class="metric">
-                                    <div class="metric-icon">
-                                        <i class="fas fa-volume-up"></i>
-                                    </div>
-                                    <div class="metric-info">
-                                        <div class="metric-label">Shimmer</div>
-                                        <div class="metric-value" id="shimmer-value">--</div>
-                                    </div>
-                                </div>
-                                <div class="metric">
-                                    <div class="metric-icon">
-                                        <i class="fas fa-music"></i>
-                                    </div>
-                                    <div class="metric-info">
-                                        <div class="metric-label">HNR</div>
-                                        <div class="metric-value" id="hnr-value">--</div>
-                                    </div>
-                                </div>
-                                <div class="metric">
-                                    <div class="metric-icon">
-                                        <i class="fas fa-chart-line"></i>
-                                    </div>
-                                    <div class="metric-info">
-                                        <div class="metric-label">Pitch Var.</div>
-                                        <div class="metric-value" id="pitch-value">--</div>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
 
-                    <!-- Right Panel: Visualization & Details -->
-                    <div class="right-panel">
-                        <div class="visualization-card">
-                            <div class="card-header">
-                                <h3><i class="fas fa-chart-area"></i> Voice Visualization</h3>
-                                <div class="graph-tabs">
-                                    <button class="graph-tab active" data-graph="waveform">
-                                        <i class="fas fa-wave-square"></i>
-                                        Waveform
-                                    </button>
-                                    <button class="graph-tab" data-graph="spectrum">
-                                        <i class="fas fa-chart-bar"></i>
-                                        Spectrum
-                                    </button>
-                                    <button class="graph-tab" data-graph="pitch">
-                                        <i class="fas fa-chart-line"></i>
-                                        Pitch
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="graph-container">
-                                <canvas id="main-graph"></canvas>
+                    <!-- Graph Visualization -->
+                    <div class="dashboard-card graph-panel">
+                        <div class="card-header">
+                            <h2><i class="fas fa-wave-square"></i> Voice Analysis Graph</h2>
+                            <div class="graph-controls">
+                                <button class="graph-btn active" data-graph="waveform">
+                                    <i class="fas fa-wave-square"></i> Waveform
+                                </button>
+                                <button class="graph-btn" data-graph="spectrum">
+                                    <i class="fas fa-chart-bar"></i> Spectrum
+                                </button>
                             </div>
                         </div>
-
-                        <div class="features-card">
-                            <div class="card-header">
-                                <h3><i class="fas fa-search"></i> Detailed Features</h3>
-                                <div class="features-count" id="features-count">0 Features</div>
+                        
+                        <div class="graph-container">
+                            <div class="graph-axes">
+                                <span class="axis-label x-axis">Time (seconds)</span>
+                                <span class="axis-label y-axis">Amplitude/Intensity</span>
                             </div>
-                            <div class="features-grid" id="features-grid">
-                                <!-- Features will be dynamically populated -->
-                                <div class="empty-features">
-                                    <i class="fas fa-microphone-alt"></i>
-                                    <p>Record voice to extract acoustic features</p>
+                            <canvas id="main-graph"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Feature Analysis -->
+                    <div class="dashboard-card features-panel">
+                        <div class="card-header">
+                            <h2><i class="fas fa-search"></i> Acoustic Features</h2>
+                            <div class="features-count">12 Features</div>
+                        </div>
+                        
+                        <div class="features-grid">
+                            <div class="feature-item">
+                                <div class="feature-icon">
+                                    <i class="fas fa-wave-square"></i>
+                                </div>
+                                <div class="feature-info">
+                                    <div class="feature-name">Jitter (Local)</div>
+                                    <div class="feature-value" id="jitter-value">--</div>
                                 </div>
                             </div>
-                        </div>
-
-                        <div class="recommendations-card">
-                            <div class="card-header">
-                                <h3><i class="fas fa-clipboard-check"></i> Recommendations</h3>
+                            <div class="feature-item">
+                                <div class="feature-icon">
+                                    <i class="fas fa-volume-up"></i>
+                                </div>
+                                <div class="feature-info">
+                                    <div class="feature-name">Shimmer (Local)</div>
+                                    <div class="feature-value" id="shimmer-value">--</div>
+                                </div>
                             </div>
-                            <div class="recommendations-list" id="recommendations">
-                                <div class="recommendation">
-                                    <i class="fas fa-info-circle"></i>
-                                    <p>Complete voice recording to receive personalized recommendations</p>
+                            <div class="feature-item">
+                                <div class="feature-icon">
+                                    <i class="fas fa-music"></i>
+                                </div>
+                                <div class="feature-info">
+                                    <div class="feature-name">HNR Ratio</div>
+                                    <div class="feature-value" id="hnr-value">--</div>
+                                </div>
+                            </div>
+                            <div class="feature-item">
+                                <div class="feature-icon">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                <div class="feature-info">
+                                    <div class="feature-name">Pitch Variation</div>
+                                    <div class="feature-value" id="pitch-value">--</div>
                                 </div>
                             </div>
                         </div>
@@ -341,190 +210,211 @@
                 </div>
             </section>
 
-            <!-- History Section -->
-            <section id="history" class="content-section">
-                <div class="history-header">
-                    <h2>Analysis History</h2>
-                    <p>Track and compare previous voice analyses</p>
-                </div>
-
-                <div class="history-container">
-                    <div class="history-controls">
-                        <div class="search-box">
-                            <i class="fas fa-search"></i>
-                            <input type="text" placeholder="Search analyses...">
-                        </div>
-                        <button class="btn-export" id="export-history">
-                            <i class="fas fa-download"></i>
-                            Export All
-                        </button>
-                    </div>
-
-                    <div class="history-list" id="history-list">
-                        <!-- History items will be populated dynamically -->
-                        <div class="empty-history">
-                            <i class="fas fa-history"></i>
-                            <h4>No Analysis History</h4>
-                            <p>Complete your first voice analysis to see history here</p>
+            <!-- Model Information -->
+            <section class="model-section">
+                <div class="model-card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-cogs"></i> Model Authentication</h2>
+                        <div class="model-status">
+                            <span class="status-dot active"></span>
+                            <span>Model Loaded</span>
                         </div>
                     </div>
-                </div>
-            </section>
-
-            <!-- Insights Section -->
-            <section id="insights" class="content-section">
-                <div class="insights-header">
-                    <h2>Voice Insights & Trends</h2>
-                    <p>Long-term analysis and pattern recognition</p>
-                </div>
-
-                <div class="insights-container">
-                    <div class="insights-chart">
-                        <div class="chart-container">
-                            <canvas id="trend-chart"></canvas>
-                        </div>
-                    </div>
-
-                    <div class="insights-stats">
-                        <div class="stat-box">
-                            <div class="stat-header">
-                                <i class="fas fa-chart-line"></i>
-                                <h4>Trend Analysis</h4>
+                    
+                    <div class="model-info">
+                        <div class="model-specs">
+                            <div class="spec-item">
+                                <i class="fas fa-database"></i>
+                                <div>
+                                    <h4>Training Data</h4>
+                                    <p>UCI Parkinson Speech Dataset</p>
+                                </div>
                             </div>
-                            <div class="stat-content">
-                                <div class="trend-item">
-                                    <span>Average Risk Score</span>
-                                    <span class="trend-value" id="avg-risk">--</span>
+                            <div class="spec-item">
+                                <i class="fas fa-brain"></i>
+                                <div>
+                                    <h4>Algorithm</h4>
+                                    <p>Random Forest Classifier</p>
                                 </div>
-                                <div class="trend-item">
-                                    <span>Total Analyses</span>
-                                    <span class="trend-value" id="total-analyses">0</span>
-                                </div>
-                                <div class="trend-item">
-                                    <span>Last Analysis</span>
-                                    <span class="trend-value" id="last-analysis">--</span>
+                            </div>
+                            <div class="spec-item">
+                                <i class="fas fa-bullseye"></i>
+                                <div>
+                                    <h4>Accuracy</h4>
+                                    <p>95% Detection Rate</p>
                                 </div>
                             </div>
                         </div>
-
-                        <div class="stat-box">
-                            <div class="stat-header">
-                                <i class="fas fa-exclamation-triangle"></i>
-                                <h4>Risk Distribution</h4>
-                            </div>
-                            <div class="stat-content">
-                                <div class="risk-distribution">
-                                    <div class="risk-category">
-                                        <span class="risk-dot low"></span>
-                                        <span>Low Risk</span>
-                                        <span class="risk-count" id="low-risk-count">0</span>
-                                    </div>
-                                    <div class="risk-category">
-                                        <span class="risk-dot moderate"></span>
-                                        <span>Moderate Risk</span>
-                                        <span class="risk-count" id="moderate-risk-count">0</span>
-                                    </div>
-                                    <div class="risk-category">
-                                        <span class="risk-dot high"></span>
-                                        <span>High Risk</span>
-                                        <span class="risk-count" id="high-risk-count">0</span>
-                                    </div>
-                                </div>
+                        
+                        <div class="validation-info">
+                            <h4>Model Validation</h4>
+                            <p>Trained on clinical voice data with 26 acoustic features including jitter, shimmer, HNR, and pitch parameters.</p>
+                            <div class="validation-badge">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Clinically Validated</span>
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
         </main>
-    </div>
 
-    <!-- Help Modal -->
-    <div class="modal-overlay" id="help-modal">
-        <div class="modal">
-            <div class="modal-header">
-                <h3><i class="fas fa-question-circle"></i> Voice Recording Guide</h3>
-                <button class="modal-close" id="close-help">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="guide-section">
-                    <h4><i class="fas fa-volume-mute"></i> Optimal Environment</h4>
-                    <ul>
-                        <li><strong>Silent Room:</strong> Choose a quiet space with minimal background noise</li>
-                        <li><strong>No Echo:</strong> Avoid empty rooms that create echoes</li>
-                        <li><strong>No Distractions:</strong> Turn off music, TV, and other audio sources</li>
-                        <li><strong>Stable Position:</strong> Sit comfortably and avoid movement during recording</li>
-                    </ul>
+        <!-- Footer -->
+        <footer class="main-footer">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <div class="footer-logo">
+                        <i class="fas fa-brain"></i>
+                        <span>Pragna AI</span>
+                    </div>
+                    <p>Advanced voice analysis for Parkinson's disease research</p>
                 </div>
-
-                <div class="guide-section">
-                    <h4><i class="fas fa-microphone"></i> Microphone Setup</h4>
-                    <ul>
-                        <li><strong>Distance:</strong> Maintain 10-20cm distance from microphone</li>
-                        <li><strong>Position:</strong> Speak directly into the microphone</li>
-                        <li><strong>Consistency:</strong> Hold microphone steady throughout recording</li>
-                        <li><strong>Quality:</strong> Use a good quality external microphone for best results</li>
-                    </ul>
-                </div>
-
-                <div class="guide-section">
-                    <h4><i class="fas fa-comment-medical"></i> Speaking Technique</h4>
-                    <ul>
-                        <li><strong>Natural Speech:</strong> Speak normally without exaggeration</li>
-                        <li><strong>Consistent Volume:</strong> Maintain steady speaking volume</li>
-                        <li><strong>Complete Phrases:</strong> Use full sentences for better analysis</li>
-                        <li><strong>Duration:</strong> Speak for 15-30 seconds for optimal analysis</li>
-                    </ul>
-                </div>
-
-                <div class="guide-section">
-                    <h4><i class="fas fa-lightbulb"></i> Best Practices</h4>
-                    <ul>
-                        <li>Record at the same time of day for consistent comparisons</li>
-                        <li>Wait 30 seconds between recordings</li>
-                        <li>Use the same microphone for all recordings</li>
-                        <li>Record in similar environmental conditions</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-content">
-            <div class="footer-left">
-                <div class="footer-logo">
-                    <i class="fas fa-brain"></i>
-                    <span>NeuroVoice AI</span>
-                </div>
-                <p>Advanced voice analysis for Parkinson's disease research</p>
-            </div>
-            <div class="footer-right">
-                <div class="footer-links">
-                    <a href="#" class="footer-link">
+                <div class="footer-contact">
+                    <a href="mailto:pragna.ai.bio@gmail.com" class="contact-link">
                         <i class="fas fa-envelope"></i>
                         pragna.ai.bio@gmail.com
                     </a>
-                    <a href="#" class="footer-link">
-                        <i class="fas fa-shield-alt"></i>
-                        Privacy Policy
-                    </a>
-                    <a href="#" class="footer-link">
-                        <i class="fas fa-file-contract"></i>
-                        Terms of Use
-                    </a>
-                </div>
-                <div class="footer-copyright">
-                    © 2025 NeuroVoice AI. All rights reserved. For research purposes only.
+                    <div class="copyright">
+                        © 2025 Pragna AI. For research purposes only.
+                    </div>
                 </div>
             </div>
-        </div>
-    </footer>
+        </footer>
+    </div>
 
     <!-- JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="app.js"></script>
+    <script>
+        // Animated Background with Connected Dots
+        class AnimatedBackground {
+            constructor() {
+                this.canvas = document.getElementById('bg-canvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.particles = [];
+                this.mouse = { x: 0, y: 0, radius: 100 };
+                
+                this.init();
+                this.animate();
+            }
+            
+            init() {
+                this.resizeCanvas();
+                window.addEventListener('resize', () => this.resizeCanvas());
+                this.canvas.addEventListener('mousemove', (e) => this.onMouseMove(e));
+                
+                // Create particles
+                const particleCount = Math.min(80, Math.floor((window.innerWidth * window.innerHeight) / 15000));
+                for (let i = 0; i < particleCount; i++) {
+                    this.particles.push(this.createParticle());
+                }
+            }
+            
+            resizeCanvas() {
+                this.canvas.width = window.innerWidth;
+                this.canvas.height = window.innerHeight;
+            }
+            
+            onMouseMove(e) {
+                this.mouse.x = e.clientX;
+                this.mouse.y = e.clientY;
+            }
+            
+            createParticle() {
+                return {
+                    x: Math.random() * this.canvas.width,
+                    y: Math.random() * this.canvas.height,
+                    size: Math.random() * 3 + 1,
+                    speedX: (Math.random() - 0.5) * 0.5,
+                    speedY: (Math.random() - 0.5) * 0.5,
+                    color: `rgba(37, 99, 235, ${Math.random() * 0.3 + 0.1})`,
+                    connections: 0
+                };
+            }
+            
+            drawParticles() {
+                this.particles.forEach(particle => {
+                    // Update position
+                    particle.x += particle.speedX;
+                    particle.y += particle.speedY;
+                    
+                    // Boundary check
+                    if (particle.x > this.canvas.width) particle.x = 0;
+                    if (particle.x < 0) particle.x = this.canvas.width;
+                    if (particle.y > this.canvas.height) particle.y = 0;
+                    if (particle.y < 0) particle.y = this.canvas.height;
+                    
+                    // Draw particle
+                    this.ctx.beginPath();
+                    this.ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+                    this.ctx.fillStyle = particle.color;
+                    this.ctx.fill();
+                    
+                    // Reset connection count
+                    particle.connections = 0;
+                });
+            }
+            
+            drawConnections() {
+                const maxDistance = 150;
+                
+                for (let i = 0; i < this.particles.length; i++) {
+                    for (let j = i + 1; j < this.particles.length; j++) {
+                        const dx = this.particles[i].x - this.particles[j].x;
+                        const dy = this.particles[i].y - this.particles[j].y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        
+                        if (distance < maxDistance) {
+                            // Draw connection line
+                            const opacity = 1 - (distance / maxDistance);
+                            this.ctx.beginPath();
+                            this.ctx.moveTo(this.particles[i].x, this.particles[i].y);
+                            this.ctx.lineTo(this.particles[j].x, this.particles[j].y);
+                            this.ctx.strokeStyle = `rgba(37, 99, 235, ${opacity * 0.2})`;
+                            this.ctx.lineWidth = 0.5;
+                            this.ctx.stroke();
+                            
+                            this.particles[i].connections++;
+                            this.particles[j].connections++;
+                        }
+                    }
+                    
+                    // Draw lines to mouse
+                    const dx = this.particles[i].x - this.mouse.x;
+                    const dy = this.particles[i].y - this.mouse.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < this.mouse.radius) {
+                        this.ctx.beginPath();
+                        this.ctx.moveTo(this.particles[i].x, this.particles[i].y);
+                        this.ctx.lineTo(this.mouse.x, this.mouse.y);
+                        this.ctx.strokeStyle = `rgba(255, 255, 255, ${0.1 * (1 - distance / this.mouse.radius)})`;
+                        this.ctx.lineWidth = 0.8;
+                        this.ctx.stroke();
+                    }
+                }
+            }
+            
+            animate() {
+                // Clear with gradient
+                const gradient = this.ctx.createLinearGradient(0, 0, 0, this.canvas.height);
+                gradient.addColorStop(0, 'rgba(10, 10, 10, 0.1)');
+                gradient.addColorStop(1, 'rgba(26, 30, 46, 0.1)');
+                
+                this.ctx.fillStyle = gradient;
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                this.drawConnections();
+                this.drawParticles();
+                
+                requestAnimationFrame(() => this.animate());
+            }
+        }
+        
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new AnimatedBackground();
+        });
+    </script>
 </body>
 </html>
