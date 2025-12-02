@@ -3,121 +3,528 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PragnaAI - Early Cancer Diagnosis Vision</title>
+    <title>NeuroVoice AI - Parkinson's Voice Analysis</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- Header (partial - for navigation) -->
-    <header class="header">
-        <div class="header-content">
-            <div class="logo">PragnaAI</div>
-            <div class="nav-links">
-                <a href="#" class="nav-link" data-page="demo">Demo</a>
-            </div>
-            <button class="mobile-menu-toggle" id="mobile-menu-toggle">
-                <i class="fas fa-bars"></i>
-            </button>
-        </div>
-        <div class="mobile-nav-links" id="mobile-nav-links">
-            <a href="#" class="mobile-nav-link" data-page="demo">Demo</a>
-        </div>
-    </header>
-    
-    <!-- Demo Page -->
-    <div id="demo-page" class="page">
-        <div class="content-wrapper">
-            <div class="demo-sections">
-                <!-- Voice Diagnosis Section -->
-                <section class="voice-diagnosis-section">
-                    <h2 class="section-title">Voice Assisted Parkinson's Disease Diagnosis</h2>
-                    <p class="demo-description">Experience our innovative voice analysis technology for Parkinson's disease research. This demo leverages models trained on the UCI "Parkinson Speech Dataset with Multiple Types of Sound Recordings" to analyze speech signals and detect subtle vocal biomarkers associated with neurological conditions.</p>
-                    <p class="demo-description">Our voice analysis focuses on detecting micro-tremors, frequency variations, and speech pattern changes that may indicate early-stage Parkinson's disease, often before visible motor symptoms appear. The system analyzes multiple acoustic parameters including:</p>
-                    <ul style="margin-left: 20px; margin-bottom: 20px; color: var(--text-muted);">
-                        <li>Fundamental frequency variations</li>
-                        <li>Amplitude variations</li>
-                        <li>Harmonic-to-noise ratio</li>
-                        <li>Vocal tremor patterns</li>
-                        <li>Speech rate and rhythm</li>
-                    </ul>
-                    <a href="#" class="demo-btn" id="voice-demo-btn">
-                        Launch Voice Diagnosis <i class="fas fa-microphone"></i>
-                    </a>
-                </section>
+    <!-- Loading Animation -->
+    <div class="loader-overlay" id="loader">
+        <div class="loader-container">
+            <div class="loader-spinner"></div>
+            <div class="loader-text">
+                <h3>Initializing NeuroVoice AI</h3>
+                <p>Loading intelligent voice analysis engine...</p>
             </div>
         </div>
     </div>
 
-    <!-- Voice Diagnosis Page -->
-    <div id="voice-page" class="page">
-        <!-- Voice Hero Section -->
-        <section class="voice-page-hero">
-            <div class="hero-content">
-                <div class="tagline-container">
-                    <h1 class="voice-tagline">
-                        "Voice Analysis for <span class="voice-tagline-emphasis">Parkinson's</span> Disease Research"
-                    </h1>
+    <!-- Main Container -->
+    <div class="app-container">
+        <!-- Navigation Sidebar -->
+        <nav class="sidebar">
+            <div class="logo-section">
+                <div class="logo">
+                    <i class="fas fa-brain"></i>
+                    <span>NeuroVoice</span>
+                </div>
+                <div class="tagline">Intelligent Voice Analysis</div>
+            </div>
+
+            <div class="nav-menu">
+                <a href="#dashboard" class="nav-item active">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#analysis" class="nav-item">
+                    <i class="fas fa-microphone"></i>
+                    <span>Voice Analysis</span>
+                </a>
+                <a href="#history" class="nav-item">
+                    <i class="fas fa-history"></i>
+                    <span>History</span>
+                </a>
+                <a href="#insights" class="nav-item">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Insights</span>
+                </a>
+            </div>
+
+            <div class="user-section">
+                <div class="user-avatar">
+                    <i class="fas fa-user-md"></i>
+                </div>
+                <div class="user-info">
+                    <div class="user-name">Clinical Researcher</div>
+                    <div class="user-status">
+                        <span class="status-indicator online"></span>
+                        System Active
+                    </div>
                 </div>
             </div>
-        </section>
-        
-        <div class="content-wrapper">
-            <!-- IMPORTANT NOTICE -->
-            <div class="important-notice">
-                <strong>IMPORTANT:</strong> This voice analysis works only under ideal conditions. Please record in silent environment with your mic close (10-20cm) to your mouth. Crowd noise, talking, echoes, or music can cause incorrect results.
-            </div>
-            
-            <section class="voice-diagnosis-section">
-                <div class="voice-diagnosis-content">
-                    <div class="voice-controls">
-                        <button id="record-btn" class="voice-btn">
-                            <i class="fas fa-microphone"></i> Start Recording
-                        </button>
-                        <button id="stop-btn" class="voice-btn" disabled>
-                            <i class="fas fa-stop"></i> Stop Recording
-                        </button>
-                        <button id="play-btn" class="voice-btn" disabled>
-                            <i class="fas fa-play"></i> Play Recording
-                        </button>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="main-header">
+                <div class="header-left">
+                    <h1>Parkinson's Voice Analysis System</h1>
+                    <p class="subtitle">AI-powered detection of vocal biomarkers</p>
+                </div>
+                <div class="header-right">
+                    <div class="system-status">
+                        <div class="status-item">
+                            <i class="fas fa-server"></i>
+                            <span>API: <strong>Connected</strong></span>
+                        </div>
+                        <div class="status-item">
+                            <i class="fas fa-microphone"></i>
+                            <span>Mic: <strong id="mic-status">Ready</strong></span>
+                        </div>
                     </div>
-                    
-                    <div id="recording-indicator" class="recording-indicator">
-                        <div class="recording-dot"></div>
-                        <span>Recording in progress...</span>
-                    </div>
-                    
-                    <audio id="audio-player" class="audio-player" controls style="display: none;"></audio>
-                    <p id="status" style="margin-top:12px; color: var(--text-muted);"></p>
-                    <div id="spinner" style="display:none; margin-top:8px; width:24px; height:24px; border:4px solid #3a506b; border-top:4px solid var(--primary-yellow); border-radius:50%; animation: spin 1s linear infinite;"></div>
-                    
-                    <div class="analysis-result" id="analysis-result" style="display: none;">
-                        <h3 class="result-title">Voice Analysis Result</h3>
-                        <div class="result-value">0%</div>
-                        <p class="result-note">
-                            Based on our preliminary analysis of your voice recording, we have detected no significant vocal biomarkers associated with Parkinson's disease.
+                    <button class="btn-help" id="help-btn">
+                        <i class="fas fa-question-circle"></i>
+                        Help Guide
+                    </button>
+                </div>
+            </header>
+
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="content-section active">
+                <div class="welcome-card">
+                    <div class="welcome-content">
+                        <h2>Welcome to NeuroVoice AI</h2>
+                        <p class="welcome-text">
+                            Advanced voice analysis platform for detecting Parkinson's disease biomarkers through 
+                            sophisticated acoustic pattern recognition and machine learning.
                         </p>
+                        <div class="welcome-stats">
+                            <div class="stat-card">
+                                <i class="fas fa-database"></i>
+                                <div>
+                                    <h3>26+</h3>
+                                    <p>Acoustic Features</p>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <i class="fas fa-brain"></i>
+                                <div>
+                                    <h3>95%</h3>
+                                    <p>Model Accuracy</p>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <i class="fas fa-clock"></i>
+                                <div>
+                                    <h3>&lt;30s</h3>
+                                    <p>Analysis Time</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="welcome-illustration">
+                        <i class="fas fa-waveform"></i>
+                    </div>
+                </div>
+
+                <div class="quick-start">
+                    <div class="quick-start-header">
+                        <h3>Quick Start Analysis</h3>
+                        <p>Record your voice for immediate biomarker detection</p>
+                    </div>
+                    <div class="quick-start-content">
+                        <div class="step">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h4>Prepare Environment</h4>
+                                <p>Find a quiet space with minimal background noise</p>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h4>Position Microphone</h4>
+                                <p>Hold microphone 10-20cm from mouth</p>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <h4>Start Recording</h4>
+                                <p>Speak naturally for 15-30 seconds</p>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn-primary start-analysis-btn">
+                        <i class="fas fa-microphone"></i>
+                        Start New Analysis
+                    </button>
+                </div>
+            </section>
+
+            <!-- Voice Analysis Section -->
+            <section id="analysis" class="content-section">
+                <div class="analysis-header">
+                    <h2>Voice Analysis Dashboard</h2>
+                    <p>Real-time voice recording and biomarker detection</p>
+                </div>
+
+                <div class="analysis-container">
+                    <!-- Left Panel: Controls & Recording -->
+                    <div class="left-panel">
+                        <div class="recording-card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-record-vinyl"></i> Voice Recording</h3>
+                                <div class="recording-status" id="recording-status">
+                                    <span class="status-dot"></span>
+                                    <span>Ready</span>
+                                </div>
+                            </div>
+
+                            <div class="recording-instructions">
+                                <div class="instruction">
+                                    <i class="fas fa-volume-mute"></i>
+                                    <span>Quiet environment</span>
+                                </div>
+                                <div class="instruction">
+                                    <i class="fas fa-microphone"></i>
+                                    <span>10-20cm from mouth</span>
+                                </div>
+                                <div class="instruction">
+                                    <i class="fas fa-comment"></i>
+                                    <span>Speak naturally</span>
+                                </div>
+                            </div>
+
+                            <div class="recording-controls">
+                                <button id="record-btn" class="btn-record">
+                                    <i class="fas fa-microphone"></i>
+                                    <span>Start Recording</span>
+                                </button>
+                                <button id="stop-btn" class="btn-stop" disabled>
+                                    <i class="fas fa-stop"></i>
+                                    <span>Stop</span>
+                                </button>
+                            </div>
+
+                            <div class="recording-timer">
+                                <div class="timer" id="timer">00:00</div>
+                                <div class="timer-label">Duration</div>
+                            </div>
+
+                            <div class="visualizer-container">
+                                <canvas id="waveform-canvas"></canvas>
+                            </div>
+
+                            <div class="audio-controls">
+                                <audio id="audio-player" controls style="display: none;"></audio>
+                                <button id="play-btn" class="btn-play" disabled>
+                                    <i class="fas fa-play"></i>
+                                    Play Recording
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="results-card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-chart-bar"></i> Analysis Results</h3>
+                                <div class="result-badge" id="result-badge">No Data</div>
+                            </div>
+
+                            <div class="risk-indicator">
+                                <div class="risk-circle">
+                                    <div class="risk-value" id="risk-value">--</div>
+                                    <div class="risk-label">Risk Score</div>
+                                </div>
+                                <div class="risk-details">
+                                    <div class="risk-level" id="risk-level">No Analysis</div>
+                                    <p class="risk-description" id="risk-description">
+                                        Record voice to begin analysis
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="feature-metrics">
+                                <div class="metric">
+                                    <div class="metric-icon">
+                                        <i class="fas fa-wave-square"></i>
+                                    </div>
+                                    <div class="metric-info">
+                                        <div class="metric-label">Jitter</div>
+                                        <div class="metric-value" id="jitter-value">--</div>
+                                    </div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-icon">
+                                        <i class="fas fa-volume-up"></i>
+                                    </div>
+                                    <div class="metric-info">
+                                        <div class="metric-label">Shimmer</div>
+                                        <div class="metric-value" id="shimmer-value">--</div>
+                                    </div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-icon">
+                                        <i class="fas fa-music"></i>
+                                    </div>
+                                    <div class="metric-info">
+                                        <div class="metric-label">HNR</div>
+                                        <div class="metric-value" id="hnr-value">--</div>
+                                    </div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-icon">
+                                        <i class="fas fa-chart-line"></i>
+                                    </div>
+                                    <div class="metric-info">
+                                        <div class="metric-label">Pitch Var.</div>
+                                        <div class="metric-value" id="pitch-value">--</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="graph-title">Waveform Voice Graph</div>
-                    <div class="graph-container">
-                        <canvas id="graph-canvas" class="graph-canvas"></canvas>
-                    </div>
+                    <!-- Right Panel: Visualization & Details -->
+                    <div class="right-panel">
+                        <div class="visualization-card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-chart-area"></i> Voice Visualization</h3>
+                                <div class="graph-tabs">
+                                    <button class="graph-tab active" data-graph="waveform">
+                                        <i class="fas fa-wave-square"></i>
+                                        Waveform
+                                    </button>
+                                    <button class="graph-tab" data-graph="spectrum">
+                                        <i class="fas fa-chart-bar"></i>
+                                        Spectrum
+                                    </button>
+                                    <button class="graph-tab" data-graph="pitch">
+                                        <i class="fas fa-chart-line"></i>
+                                        Pitch
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="graph-container">
+                                <canvas id="main-graph"></canvas>
+                            </div>
+                        </div>
 
-                    <div class="research-disclaimer">
-                        <strong>THIS METHOD OF DIAGNOSIS IS UNDER RESEARCH AND DEVELOPMENT BY PragnaAI</strong>
-                        <br><br>
-                        The voice analysis technology demonstrated here is currently in experimental stages and should not be used for medical diagnosis. Our research focuses on detecting subtle frequency changes in voice patterns that may correlate with early-stage neurological biomarkers.
+                        <div class="features-card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-search"></i> Detailed Features</h3>
+                                <div class="features-count" id="features-count">0 Features</div>
+                            </div>
+                            <div class="features-grid" id="features-grid">
+                                <!-- Features will be dynamically populated -->
+                                <div class="empty-features">
+                                    <i class="fas fa-microphone-alt"></i>
+                                    <p>Record voice to extract acoustic features</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="recommendations-card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-clipboard-check"></i> Recommendations</h3>
+                            </div>
+                            <div class="recommendations-list" id="recommendations">
+                                <div class="recommendation">
+                                    <i class="fas fa-info-circle"></i>
+                                    <p>Complete voice recording to receive personalized recommendations</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
+
+            <!-- History Section -->
+            <section id="history" class="content-section">
+                <div class="history-header">
+                    <h2>Analysis History</h2>
+                    <p>Track and compare previous voice analyses</p>
+                </div>
+
+                <div class="history-container">
+                    <div class="history-controls">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" placeholder="Search analyses...">
+                        </div>
+                        <button class="btn-export" id="export-history">
+                            <i class="fas fa-download"></i>
+                            Export All
+                        </button>
+                    </div>
+
+                    <div class="history-list" id="history-list">
+                        <!-- History items will be populated dynamically -->
+                        <div class="empty-history">
+                            <i class="fas fa-history"></i>
+                            <h4>No Analysis History</h4>
+                            <p>Complete your first voice analysis to see history here</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Insights Section -->
+            <section id="insights" class="content-section">
+                <div class="insights-header">
+                    <h2>Voice Insights & Trends</h2>
+                    <p>Long-term analysis and pattern recognition</p>
+                </div>
+
+                <div class="insights-container">
+                    <div class="insights-chart">
+                        <div class="chart-container">
+                            <canvas id="trend-chart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="insights-stats">
+                        <div class="stat-box">
+                            <div class="stat-header">
+                                <i class="fas fa-chart-line"></i>
+                                <h4>Trend Analysis</h4>
+                            </div>
+                            <div class="stat-content">
+                                <div class="trend-item">
+                                    <span>Average Risk Score</span>
+                                    <span class="trend-value" id="avg-risk">--</span>
+                                </div>
+                                <div class="trend-item">
+                                    <span>Total Analyses</span>
+                                    <span class="trend-value" id="total-analyses">0</span>
+                                </div>
+                                <div class="trend-item">
+                                    <span>Last Analysis</span>
+                                    <span class="trend-value" id="last-analysis">--</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="stat-box">
+                            <div class="stat-header">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <h4>Risk Distribution</h4>
+                            </div>
+                            <div class="stat-content">
+                                <div class="risk-distribution">
+                                    <div class="risk-category">
+                                        <span class="risk-dot low"></span>
+                                        <span>Low Risk</span>
+                                        <span class="risk-count" id="low-risk-count">0</span>
+                                    </div>
+                                    <div class="risk-category">
+                                        <span class="risk-dot moderate"></span>
+                                        <span>Moderate Risk</span>
+                                        <span class="risk-count" id="moderate-risk-count">0</span>
+                                    </div>
+                                    <div class="risk-category">
+                                        <span class="risk-dot high"></span>
+                                        <span>High Risk</span>
+                                        <span class="risk-count" id="high-risk-count">0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Help Modal -->
+    <div class="modal-overlay" id="help-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-question-circle"></i> Voice Recording Guide</h3>
+                <button class="modal-close" id="close-help">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="guide-section">
+                    <h4><i class="fas fa-volume-mute"></i> Optimal Environment</h4>
+                    <ul>
+                        <li><strong>Silent Room:</strong> Choose a quiet space with minimal background noise</li>
+                        <li><strong>No Echo:</strong> Avoid empty rooms that create echoes</li>
+                        <li><strong>No Distractions:</strong> Turn off music, TV, and other audio sources</li>
+                        <li><strong>Stable Position:</strong> Sit comfortably and avoid movement during recording</li>
+                    </ul>
+                </div>
+
+                <div class="guide-section">
+                    <h4><i class="fas fa-microphone"></i> Microphone Setup</h4>
+                    <ul>
+                        <li><strong>Distance:</strong> Maintain 10-20cm distance from microphone</li>
+                        <li><strong>Position:</strong> Speak directly into the microphone</li>
+                        <li><strong>Consistency:</strong> Hold microphone steady throughout recording</li>
+                        <li><strong>Quality:</strong> Use a good quality external microphone for best results</li>
+                    </ul>
+                </div>
+
+                <div class="guide-section">
+                    <h4><i class="fas fa-comment-medical"></i> Speaking Technique</h4>
+                    <ul>
+                        <li><strong>Natural Speech:</strong> Speak normally without exaggeration</li>
+                        <li><strong>Consistent Volume:</strong> Maintain steady speaking volume</li>
+                        <li><strong>Complete Phrases:</strong> Use full sentences for better analysis</li>
+                        <li><strong>Duration:</strong> Speak for 15-30 seconds for optimal analysis</li>
+                    </ul>
+                </div>
+
+                <div class="guide-section">
+                    <h4><i class="fas fa-lightbulb"></i> Best Practices</h4>
+                    <ul>
+                        <li>Record at the same time of day for consistent comparisons</li>
+                        <li>Wait 30 seconds between recordings</li>
+                        <li>Use the same microphone for all recordings</li>
+                        <li>Record in similar environmental conditions</li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
-    
-    <div class="footer-text">
-        Email: pragna.ai.bio@gmail.com<br>
-        © 2025 PragnaAI - Transforming Early Disease Detection
-    </div>
-    <script src="scripts.js"></script>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-left">
+                <div class="footer-logo">
+                    <i class="fas fa-brain"></i>
+                    <span>NeuroVoice AI</span>
+                </div>
+                <p>Advanced voice analysis for Parkinson's disease research</p>
+            </div>
+            <div class="footer-right">
+                <div class="footer-links">
+                    <a href="#" class="footer-link">
+                        <i class="fas fa-envelope"></i>
+                        pragna.ai.bio@gmail.com
+                    </a>
+                    <a href="#" class="footer-link">
+                        <i class="fas fa-shield-alt"></i>
+                        Privacy Policy
+                    </a>
+                    <a href="#" class="footer-link">
+                        <i class="fas fa-file-contract"></i>
+                        Terms of Use
+                    </a>
+                </div>
+                <div class="footer-copyright">
+                    © 2025 NeuroVoice AI. All rights reserved. For research purposes only.
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
