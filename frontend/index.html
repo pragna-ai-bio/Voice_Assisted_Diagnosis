@@ -53,6 +53,17 @@
                     </div>
 
                     <audio id="audio-player"></audio>
+
+                    <div class="audio-player-controls">
+                        <div class="time-display" id="current-time">0:00</div>
+                        <div class="progress-container">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="progress-fill"></div>
+                                <input type="range" id="progress-slider" class="progress-slider" min="0" max="100" value="0">
+                            </div>
+                        </div>
+                        <div class="time-display" id="total-time">0:00</div>
+                    </div>
                 </section>
 
                 <!-- Results Section -->

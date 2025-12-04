@@ -23,6 +23,10 @@ class VoiceAnalysisApp {
         this.playBtn = document.getElementById('play-btn');
         this.timerDisplay = document.getElementById('timer');
         this.audioPlayer = document.getElementById('audio-player');
+        this.progressFill = document.getElementById('progress-fill');
+        this.progressSlider = document.getElementById('progress-slider');
+        this.currentTimeDisplay = document.getElementById('current-time');
+        this.totalTimeDisplay = document.getElementById('total-time');
         this.waveformCanvas = document.getElementById('waveform-canvas');
         this.graphCanvas = document.getElementById('analysis-graph');
         
@@ -60,6 +64,19 @@ class VoiceAnalysisApp {
             }
         });
         this.playBtn.addEventListener('click', () => this.audioPlayer.play());
+        
+        // Audio Player Controls
+        if (this.audioPlayer) {
+            this.audioPlayer.addEventListener('timeupdate', () => this.updateProgressBar());
+            this.audioPlayer.addEventListener('loadedmetadata', () => this.updateTotalTime());
+        }
+        if (this.progressSlider) {
+            this.progressSlider.addEventListener('input', (e) => {
+                if (this.audioPlayer && this.audioPlayer.duration) {
+                    this.audioPlayer.currentTime = (e.target.value / 100) * this.audioPlayer.duration;
+                }
+            });
+        }
         
         // Graph Controls
         this.graphButtons.forEach(btn => {
@@ -438,6 +455,36 @@ class VoiceAnalysisApp {
         this.graphChart.data.labels = labels;
         this.graphChart.data.datasets = [dataset];
         this.graphChart.update();
+    }
+
+    updateProgressBar() {
+        if (!this.audioPlayer || !this.audioPlayer.duration) return;
+        
+        const progress = (this.audioPlayer.currentTime / this.audioPlayer.duration) * 100;
+        if (this.progressFill) {
+            this.progressFill.style.width = progress + '%';
+        }
+        if (this.progressSlider) {
+            this.progressSlider.value = progress;
+        }
+        if (this.currentTimeDisplay) {
+            this.currentTimeDisplay.textContent = this.formatTime(this.audioPlayer.currentTime);
+        }
+    }
+
+    updateTotalTime() {
+        if (!this.audioPlayer) return;
+        if (this.totalTimeDisplay) {
+            this.totalTimeDisplay.textContent = this.formatTime(this.audioPlayer.duration);
+        }
+    }
+
+    formatTime(seconds) {
+        if (!seconds || isNaN(seconds)) return '0:00';
+        
+        const mins = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${mins}:${secs.toString().padStart(2, '0')}`;
     }
 }
 
