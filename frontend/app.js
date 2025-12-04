@@ -21,8 +21,10 @@ class VoiceAnalysisApp {
         this.recordBtn = document.getElementById('record-btn');
         this.recordBtnText = document.getElementById('record-btn-text');
         this.playBtn = document.getElementById('play-btn');
+        this.playBtnIcon = this.playBtn ? this.playBtn.querySelector('i') : null;
         this.timerDisplay = document.getElementById('timer');
         this.audioPlayer = document.getElementById('audio-player');
+        this.audioControls = document.querySelector('.audio-player-controls');
         this.progressFill = document.getElementById('progress-fill');
         this.progressSlider = document.getElementById('progress-slider');
         this.currentTimeDisplay = document.getElementById('current-time');
@@ -52,6 +54,15 @@ class VoiceAnalysisApp {
         
         // Graph Elements
         this.graphButtons = document.querySelectorAll('.graph-btn');
+
+        // If there's no recorded audio yet, visually mark controls as disabled
+        if (this.audioControls) this.audioControls.classList.add('disabled');
+        // ensure play button shows play icon initially
+        if (this.playBtnIcon) {
+            this.playBtnIcon.classList.remove('fa-pause');
+            this.playBtnIcon.classList.add('fa-play');
+            if (this.playBtn) this.playBtn.title = 'Play';
+        }
     }
     
     initEventListeners() {
@@ -63,12 +74,26 @@ class VoiceAnalysisApp {
                 this.startRecording();
             }
         });
-        this.playBtn.addEventListener('click', () => this.audioPlayer.play());
+        if (this.playBtn) {
+            this.playBtn.addEventListener('click', () => {
+                if (!this.audioPlayer) return;
+                if (this.audioPlayer.paused || this.audioPlayer.ended) {
+                    this.audioPlayer.play().catch(() => {});
+                } else {
+                    this.audioPlayer.pause();
+                }
+            });
+        }
         
         // Audio Player Controls
         if (this.audioPlayer) {
             this.audioPlayer.addEventListener('timeupdate', () => this.updateProgressBar());
             this.audioPlayer.addEventListener('loadedmetadata', () => this.updateTotalTime());
+            // Sync play/pause icon with audio playback
+            this.audioPlayer.addEventListener('play', () => this.updatePlayButtonIcon());
+            this.audioPlayer.addEventListener('playing', () => this.updatePlayButtonIcon());
+            this.audioPlayer.addEventListener('pause', () => this.updatePlayButtonIcon());
+            this.audioPlayer.addEventListener('ended', () => this.updatePlayButtonIcon());
         }
         if (this.progressSlider) {
             this.progressSlider.addEventListener('input', (e) => {
@@ -177,6 +202,19 @@ class VoiceAnalysisApp {
         this.modelStatus.textContent = status;
         this.modelStatusDot.classList.toggle('connected', loaded);
     }
+
+    updatePlayButtonIcon() {
+        if (!this.playBtn || !this.playBtnIcon) return;
+        if (this.audioPlayer && !this.audioPlayer.paused && !this.audioPlayer.ended) {
+            this.playBtnIcon.classList.remove('fa-play');
+            this.playBtnIcon.classList.add('fa-pause');
+            this.playBtn.title = 'Pause';
+        } else {
+            this.playBtnIcon.classList.remove('fa-pause');
+            this.playBtnIcon.classList.add('fa-play');
+            this.playBtn.title = 'Play';
+        }
+    }
     
     async startRecording() {
         try {
@@ -210,7 +248,17 @@ class VoiceAnalysisApp {
                 const audioUrl = URL.createObjectURL(audioBlob);
                 this.audioPlayer.src = audioUrl;
                 this.playBtn.disabled = false;
-                
+                // enable audio controls visually once audio is available
+                if (this.audioControls) this.audioControls.classList.remove('disabled');
+                // ensure play button shows correct icon
+                this.updatePlayButtonIcon();
+                // Decode audio and compute visuals (waveform, spectrum, pitch)
+                try {
+                    await this._decodeAndComputeVisuals(audioBlob);
+                } catch (e) {
+                    console.warn('Visuals decode failed:', e);
+                }
+
                 // Analyze the recording
                 await this.analyzeRecording(audioBlob);
                 
@@ -250,6 +298,147 @@ class VoiceAnalysisApp {
             console.error('Error starting recording:', error);
             alert('Unable to access microphone. Please check permissions and try again.');
         }
+    }
+
+    async _decodeAndComputeVisuals(audioBlob) {
+        // Decode audio blob to AudioBuffer and compute waveform, spectrum and pitch contour
+        try {
+            const arrayBuffer = await audioBlob.arrayBuffer();
+            const actx = new (window.AudioContext || window.webkitAudioContext)();
+            const audioBuffer = await actx.decodeAudioData(arrayBuffer);
+            const sampleRate = audioBuffer.sampleRate;
+            const channelData = audioBuffer.getChannelData(0);
+
+            // Waveform: downsample to 500 points
+            const wfSize = 500;
+            const step = Math.max(1, Math.floor(channelData.length / wfSize));
+            const waveform = new Array(Math.ceil(channelData.length / step)).fill(0).map((_, i) => channelData[i * step]);
+
+            // Spectrum: take first N samples (power of two), window and FFT
+            const N = 2048;
+            const specInput = channelData.subarray(0, Math.min(N, channelData.length));
+            const fftSize = this._nextPow2(specInput.length);
+            const real = new Float32Array(fftSize);
+            const imag = new Float32Array(fftSize);
+            // copy and apply Hanning window
+            for (let i = 0; i < specInput.length; i++) {
+                const w = 0.5 * (1 - Math.cos((2 * Math.PI * i) / (specInput.length - 1)));
+                real[i] = specInput[i] * w;
+            }
+            // zero-pad rest
+            for (let i = specInput.length; i < fftSize; i++) real[i] = 0;
+
+            this._fft(real, imag);
+            const mags = [];
+            const half = fftSize / 2;
+            for (let i = 0; i < half; i++) {
+                mags.push(Math.sqrt(real[i] * real[i] + imag[i] * imag[i]));
+            }
+
+            // Reduce spectrum to 128 bins for plotting
+            const specBins = 128;
+            const bins = new Array(specBins).fill(0);
+            for (let i = 0; i < specBins; i++) {
+                const start = Math.floor((i / specBins) * mags.length);
+                const end = Math.floor(((i + 1) / specBins) * mags.length);
+                let sum = 0;
+                for (let j = start; j < end; j++) sum += mags[j] || 0;
+                bins[i] = sum / Math.max(1, end - start);
+            }
+
+            // Pitch contour: simple autocorrelation per frame
+            const frameCount = 80;
+            const frameLen = Math.floor(channelData.length / frameCount);
+            const pitchContour = [];
+            for (let f = 0; f < frameCount; f++) {
+                const start = f * frameLen;
+                const frame = channelData.subarray(start, Math.min(start + frameLen, channelData.length));
+                const freq = this._estimatePitchFromAutocorr(frame, sampleRate);
+                pitchContour.push(freq || 0);
+            }
+
+            // Store latest visuals and update graph if user is on waveform
+            this.latestVisuals = { waveform, spectrum: bins, pitch: pitchContour };
+            // If current graph not set, update the graph display with waveform by default
+            if (this.currentGraph === 'waveform') this.updateGraphWithData(waveform);
+            else if (this.currentGraph === 'spectrum') this.updateGraphWithData(bins);
+            else if (this.currentGraph === 'pitch') this.updateGraphWithData(pitchContour);
+
+            try { actx.close(); } catch (e) { /* ignore */ }
+        } catch (e) {
+            console.error('Error decoding audio for visuals', e);
+            throw e;
+        }
+    }
+
+    _nextPow2(v) {
+        let p = 1;
+        while (p < v) p <<= 1;
+        return p;
+    }
+
+    _fft(real, imag) {
+        // iterative Cooley-Tukey FFT (in-place), assumes length is power of two
+        const n = real.length;
+        if (n <= 1) return;
+        const levels = Math.log2(n);
+        if (Math.floor(levels) !== levels) throw new Error('FFT size must be power of two');
+
+        // bit-reversal permutation
+        for (let i = 0; i < n; i++) {
+            let j = 0;
+            for (let k = 0; k < levels; k++) j = (j << 1) | ((i >>> k) & 1);
+            if (j > i) {
+                [real[i], real[j]] = [real[j], real[i]];
+                [imag[i], imag[j]] = [imag[j], imag[i]];
+            }
+        }
+
+        for (let size = 2; size <= n; size <<= 1) {
+            const halfSize = size >> 1;
+            const tableStep = n / size;
+            for (let i = 0; i < n; i += size) {
+                for (let j = i, k = 0; j < i + halfSize; j++, k += tableStep) {
+                    const l = j + halfSize;
+                    const angle = -2 * Math.PI * k / n;
+                    const wr = Math.cos(angle);
+                    const wi = Math.sin(angle);
+                    const xr = wr * real[l] - wi * imag[l];
+                    const xi = wr * imag[l] + wi * real[l];
+                    real[l] = real[j] - xr;
+                    imag[l] = imag[j] - xi;
+                    real[j] += xr;
+                    imag[j] += xi;
+                }
+            }
+        }
+    }
+
+    _estimatePitchFromAutocorr(frame, sampleRate) {
+        // basic autocorrelation-based pitch detection
+        const size = frame.length;
+        if (size < 32) return 0;
+        // remove DC
+        let mean = 0;
+        for (let i = 0; i < size; i++) mean += frame[i];
+        mean /= size;
+        const signal = new Float32Array(size);
+        for (let i = 0; i < size; i++) signal[i] = frame[i] - mean;
+
+        // autocorrelation
+        const maxLag = Math.floor(sampleRate / 50); // min 50 Hz
+        const minLag = Math.floor(sampleRate / 500); // max 500 Hz
+        let bestLag = -1;
+        let bestVal = -Infinity;
+        for (let lag = minLag; lag <= maxLag && lag < size; lag++) {
+            let sum = 0;
+            for (let i = 0; i < size - lag; i++) sum += signal[i] * signal[i + lag];
+            if (sum > bestVal) { bestVal = sum; bestLag = lag; }
+        }
+        if (bestLag <= 0) return 0;
+        const freq = sampleRate / bestLag;
+        if (freq < 50 || freq > 500) return 0;
+        return Math.round(freq);
     }
     
     stopRecording() {
@@ -411,8 +600,10 @@ class VoiceAnalysisApp {
             this.featuresCount.textContent = '4 Features';
         }
         
-        // Update graph
-        this.updateGraphWithData(result.waveform_data || []);
+        // Update graph: prefer client-side computed visuals (this.latestVisuals)
+        const visuals = this.latestVisuals || {};
+        const graphData = (visuals && visuals[this.currentGraph]) || result.waveform_data || [];
+        this.updateGraphWithData(graphData);
         
         // Update the result badge to a small colored circle reflecting risk
         if (this.resultBadge) {
@@ -469,20 +660,75 @@ class VoiceAnalysisApp {
     
     updateGraphWithData(data) {
         if (!this.graphChart) return;
-        
-        const labels = Array.from({length: data.length || 100}, (_, i) => i);
+        // Defensive: ensure array and numeric values
+        let cleaned = Array.isArray(data) ? data.slice() : [];
+
+        // If we have no meaningful data, fall back to random visualization to avoid blank chart
+        const allZeros = cleaned.length === 0 || cleaned.every(v => v === 0 || v === null || v === undefined || !isFinite(v));
+
+        // For large arrays (waveform), downsample to a reasonable size for chart performance
+        const maxPoints = 800;
+        if (cleaned.length > maxPoints) {
+            const step = Math.ceil(cleaned.length / maxPoints);
+            cleaned = cleaned.filter((_, i) => i % step === 0);
+        }
+
+        // Handle different graph types
+        let labels = cleaned.map((_, i) => i);
+        let datasetData = cleaned;
+        let borderColor = '#2563eb';
+        let backgroundColor = 'rgba(37, 99, 235, 0.1)';
+        let tension = 0.4;
+
+        if (this.currentGraph === 'spectrum') {
+            // Expect magnitudes => convert to dB for better visual
+            const mags = cleaned.map(v => (v && isFinite(v)) ? Math.max(1e-8, Math.abs(v)) : 1e-8);
+            const db = mags.map(m => 20 * Math.log10(m));
+            // normalize to 0..100
+            const minDb = Math.min(...db);
+            const maxDb = Math.max(...db);
+            const norm = db.map(v => (v - minDb) / (maxDb - minDb || 1) * 100);
+            datasetData = norm;
+            borderColor = '#f59e0b';
+            backgroundColor = 'rgba(245, 158, 11, 0.15)';
+            tension = 0.0;
+        } else if (this.currentGraph === 'pitch') {
+            // Replace 0 or invalid pitch values with null to break line on unvoiced segments
+            datasetData = cleaned.map(v => (v && isFinite(v) && v > 0) ? v : null);
+            borderColor = '#7c3aed';
+            backgroundColor = 'rgba(124, 58, 237, 0.08)';
+            tension = 0.2;
+        } else { // waveform
+            // scale waveform to visible range
+            const maxAbs = Math.max(...cleaned.map(v => Math.abs(v) || 0), 1e-6);
+            datasetData = cleaned.map(v => (isFinite(v) ? v / maxAbs * 100 : 0));
+            borderColor = '#2563eb';
+            backgroundColor = 'rgba(37, 99, 235, 0.1)';
+            tension = 0.3;
+        }
+
+        // If datasetData is empty or all nulls, provide a small placeholder to avoid Chart errors
+        const allNull = datasetData.length === 0 || datasetData.every(v => v === null || v === undefined);
+        if (allZeros || allNull) {
+            labels = Array.from({length: 100}, (_, i) => i);
+            datasetData = Array.from({length: 100}, () => Math.random() * 10);
+        }
+
         const dataset = {
             label: this.currentGraph.charAt(0).toUpperCase() + this.currentGraph.slice(1),
-            data: data.length > 0 ? data : Array.from({length: 100}, () => Math.random() * 100),
-            borderColor: '#2563eb',
-            backgroundColor: 'rgba(37, 99, 235, 0.1)',
+            data: datasetData,
+            borderColor,
+            backgroundColor,
             borderWidth: 2,
-            fill: true,
-            tension: 0.4
+            fill: this.currentGraph === 'waveform',
+            tension
         };
-        
+
+        // Apply config and update chart
         this.graphChart.data.labels = labels;
         this.graphChart.data.datasets = [dataset];
+        // ensure chart type matches selection
+        this.graphChart.config.type = (this.currentGraph === 'spectrum') ? 'bar' : 'line';
         this.graphChart.update();
     }
 

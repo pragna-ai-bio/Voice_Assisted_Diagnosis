@@ -263,37 +263,47 @@ body {
 
 .btn:active:not(:disabled) {
     transform: translateY(0);
+    filter: brightness(0.88);
+    box-shadow: none;
 }
 
 .btn-secondary {
-    background: linear-gradient(135deg, var(--bg-card-light), var(--bg-card));
-    color: var(--text-primary);
+    /* unified button color: use primary blue */
+    background: linear-gradient(135deg, var(--primary-blue), var(--primary-blue-dark));
+    color: white;
+    border: 1px solid var(--primary-blue);
 }
 
 .btn-tertiary {
-    background: linear-gradient(135deg, var(--accent-cyan), #0891b2);
+    background: linear-gradient(135deg, var(--primary-blue), var(--primary-blue-dark));
     color: white;
+    border: 1px solid var(--primary-blue);
 }
 
 .btn-danger {
-    background: linear-gradient(135deg, var(--danger-red), #b91c1c);
+    background: linear-gradient(135deg, var(--primary-blue), var(--primary-blue-dark));
+    color: white;
+    border: 1px solid var(--primary-blue);
 }
 
 .btn-success {
-    background: linear-gradient(135deg, var(--success-green), #059669);
+    background: linear-gradient(135deg, var(--primary-blue), var(--primary-blue-dark));
+    color: white;
+    border: 1px solid var(--primary-blue);
 }
 
 .btn.recording {
-    background: linear-gradient(135deg, var(--danger-red), #b91c1c);
+    /* keep recording pulse but with unified color */
+    background: linear-gradient(135deg, var(--primary-blue), var(--primary-blue-dark));
     animation: pulse-recording 1s infinite;
 }
 
 @keyframes pulse-recording {
     0%, 100% {
-        box-shadow: 0 0 20px rgba(220, 38, 38, 0.3);
+        box-shadow: 0 0 20px rgba(37, 99, 235, 0.25);
     }
     50% {
-        box-shadow: 0 0 30px rgba(220, 38, 38, 0.6);
+        box-shadow: 0 0 30px rgba(37, 99, 235, 0.45);
     }
 }
 
@@ -399,6 +409,30 @@ body {
     border: none;
 }
 
+/* Disabled state for the audio player controls when no audio is available */
+.audio-player-controls.disabled {
+    opacity: 0.48;
+    filter: grayscale(0.25) brightness(0.95);
+    pointer-events: none;
+}
+
+/* Make disabled buttons visually distinct */
+.btn[disabled],
+.btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    filter: grayscale(0.15) brightness(0.92);
+    pointer-events: none;
+}
+
+.audio-player-controls.disabled .progress-fill {
+    background: linear-gradient(90deg, rgba(100,100,100,0.6), rgba(150,150,150,0.6));
+}
+
+.audio-player-controls.disabled .time-display {
+    color: rgba(220,220,220,0.6);
+}
+
 /* Risk Indicator - Full Width */
 .risk-indicator {
     display: flex;
@@ -456,12 +490,18 @@ body {
 /* Graph Container */
 .graph-container {
     width: 100%;
-    height: clamp(250px, 30vh, 350px);
+    height: clamp(320px, 40vh, 520px);
     background: rgba(0, 0, 0, 0.5);
     border-radius: 12px;
-    padding: 16px;
+    padding: 12px;
     border: 1px solid var(--border-color);
     margin-top: 20px;
+}
+
+.graph-container canvas {
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
 }
 
 .graph-controls {
@@ -473,10 +513,10 @@ body {
 
 .graph-btn {
     padding: 12px 20px;
-    background: var(--bg-card-light);
-    border: 1px solid var(--border-color);
+    background: linear-gradient(135deg, var(--primary-blue), var(--primary-blue-dark));
+    border: 1px solid var(--primary-blue);
     border-radius: 10px;
-    color: var(--text-secondary);
+    color: white;
     font-size: clamp(0.9rem, 2vw, 1rem);
     display: flex;
     align-items: center;
@@ -491,6 +531,11 @@ body {
 .graph-btn:hover:not(.active) {
     border-color: var(--primary-blue);
     box-shadow: var(--glow-blue);
+}
+
+.graph-btn:active {
+    transform: translateY(0);
+    filter: brightness(0.88);
 }
 
 .graph-btn.active {
@@ -592,10 +637,11 @@ body {
     margin: 0 auto;
     width: 100%;
     display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
+    flex-direction: column;
     align-items: center;
-    gap: clamp(16px, 4vw, 24px);
+    justify-content: center;
+    text-align: center;
+    gap: clamp(12px, 3vw, 20px);
 }
 
 .footer-logo {
