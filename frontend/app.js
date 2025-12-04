@@ -230,6 +230,14 @@ class VoiceAnalysisApp {
             this.recordBtn.classList.add('recording');
             this.resultBadge.textContent = 'Recording';
             this.resultBadge.style.color = '#f59e0b';
+            // Ensure badge shows text state (not circle)
+            if (this.resultBadge) {
+                this.resultBadge.classList.remove('badge-circle');
+                this.resultBadge.style.display = 'inline-block';
+                this.resultBadge.style.background = '';
+                this.resultBadge.style.boxShadow = '';
+                this.resultBadge.title = '';
+            }
             
             // Start timer
             this.recordingStartTime = Date.now();
@@ -253,6 +261,13 @@ class VoiceAnalysisApp {
             this.recordBtnText.textContent = 'Start Recording';
             this.recordBtn.classList.remove('recording');
             this.resultBadge.textContent = 'Processing...';
+            if (this.resultBadge) {
+                this.resultBadge.classList.remove('badge-circle');
+                this.resultBadge.style.display = 'inline-block';
+                this.resultBadge.style.background = '';
+                this.resultBadge.style.boxShadow = '';
+                this.resultBadge.title = '';
+            }
             
             // Stop timer
             this.stopTimer();
@@ -399,9 +414,16 @@ class VoiceAnalysisApp {
         // Update graph
         this.updateGraphWithData(result.waveform_data || []);
         
-        // Update result badge
-        this.resultBadge.textContent = riskLevel;
-        this.resultBadge.style.color = riskColor;
+        // Update the result badge to a small colored circle reflecting risk
+        if (this.resultBadge) {
+            // clear text and apply circle styling class
+            this.resultBadge.textContent = '';
+            this.resultBadge.classList.add('badge-circle');
+            this.resultBadge.style.background = riskColor;
+            this.resultBadge.style.boxShadow = `0 0 10px ${riskColor}`;
+            this.resultBadge.style.display = 'inline-block';
+            this.resultBadge.title = `${riskLevel} (${riskPercentage}%)`;
+        }
     }
     
     displayError() {
@@ -409,8 +431,15 @@ class VoiceAnalysisApp {
         this.riskLevel.textContent = 'Analysis Failed';
         this.riskLevel.style.color = '#dc2626';
         this.riskDescription.textContent = 'Unable to analyze recording. Please try again.';
-        this.resultBadge.textContent = 'Error';
-        this.resultBadge.style.color = '#dc2626';
+        // Show result badge as a small red circle when an error occurs
+        if (this.resultBadge) {
+            this.resultBadge.textContent = '';
+            this.resultBadge.classList.add('badge-circle');
+            this.resultBadge.style.background = '#dc2626';
+            this.resultBadge.style.boxShadow = '0 0 10px #dc2626';
+            this.resultBadge.style.display = 'inline-block';
+            this.resultBadge.title = 'Analysis Error';
+        }
         
         // Reset feature values
         this.jitterValue.textContent = '--';
