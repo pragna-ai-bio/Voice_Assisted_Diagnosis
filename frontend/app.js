@@ -686,4 +686,93 @@ class VoiceAnalysisApp {
         let labels = cleaned.map((_, i) => i);
         let datasetData = cleaned;
         let borderColor = '#2563eb';
-        let backgroundColor = 'rgba(37, 99, 235, 0.
+        let backgroundColor = 'rgba(37, 99, 235, 0.1)';
+        let tension = 0.4;
+
+        if (this.currentGraph === 'spectrum') {
+            // Expect magnitudes => convert to dB for better visual
+            const mags = cleaned.map(v => (v && isFinite(v)) ? Math.max(1e-8, Math.abs(v)) : 1e-8);
+            const db = mags.map(m => 20 * Math.log10(m));
+            // normalize to 0..100
+            const minDb = Math.min(...db);
+            const maxDb = Math.max(...db);
+            const norm = db.map(v => (v - minDb) / (maxDb - minDb || 1) * 100);
+            datasetData = norm;
+            borderColor = '#f59e0b';
+            backgroundColor = 'rgba(245, 158, 11, 0.15)';
+            tension = 0.0;
+        } else if (this.currentGraph === 'pitch') {
+            // Replace 0 or invalid pitch values with null to break line on unvoiced segments
+            datasetData = cleaned.map(v => (v && isFinite(v) && v > 0) ? v : null);
+            borderColor = '#7c3aed';
+            backgroundColor = 'rgba(124, 58, 237, 0.08)';
+            tension = 0.2;
+        } else { // waveform
+            // scale waveform to visible range
+            const maxAbs = Math.max(...cleaned.map(v => Math.abs(v) || 0), 1e-6);
+            datasetData = cleaned.map(v => (isFinite(v) ? v / maxAbs * 100 : 0));
+            borderColor = '#2563eb';
+            backgroundColor = 'rgba(37, 99, 235, 0.1)';
+            tension = 0.3;
+        }
+
+        // If datasetData is empty or all nulls, provide a small placeholder to avoid Chart errors
+        const allNull = datasetData.length === 0 || datasetData.every(v => v === null || v === undefined);
+        if (allZeros || allNull) {
+            labels = Array.from({length: 100}, (_, i) => i);
+            datasetData = Array.from({length: 100}, () => Math.random() * 10);
+        }
+
+        const dataset = {
+            label: this.currentGraph.charAt(0).toUpperCase() + this.currentGraph.slice(1),
+            data: datasetData,
+            borderColor,
+            backgroundColor,
+            borderWidth: 2,
+            fill: this.currentGraph === 'waveform',
+            tension
+        };
+
+        // Apply config and update chart
+        this.graphChart.data.labels = labels;
+        this.graphChart.data.datasets = [dataset];
+        // ensure chart type matches selection
+        this.graphChart.config.type = (this.currentGraph === 'spectrum') ? 'bar' : 'line';
+        this.graphChart.update();
+    }
+
+    updateProgressBar() {
+        if (!this.audioPlayer || !this.audioPlayer.duration) return;
+        
+        const progress = (this.audioPlayer.currentTime / this.audioPlayer.duration) * 100;
+        if (this.progressFill) {
+            this.progressFill.style.width = progress + '%';
+        }
+        if (this.progressSlider) {
+            this.progressSlider.value = progress;
+        }
+        if (this.currentTimeDisplay) {
+            this.currentTimeDisplay.textContent = this.formatTime(this.audioPlayer.currentTime);
+        }
+    }
+
+    updateTotalTime() {
+        if (!this.audioPlayer) return;
+        if (this.totalTimeDisplay) {
+            this.totalTimeDisplay.textContent = this.formatTime(this.audioPlayer.duration);
+        }
+    }
+
+    formatTime(seconds) {
+        if (!seconds || isNaN(seconds)) return '0:00';
+        
+        const mins = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${mins}:${secs.toString().padStart(2, '0')}`;
+    }
+}
+
+// Initialize app when page loads
+document.addEventListener('DOMContentLoaded', () => {
+    window.app = new VoiceAnalysisApp();
+});
