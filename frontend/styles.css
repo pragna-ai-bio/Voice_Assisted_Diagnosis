@@ -307,15 +307,17 @@ body {
     }
 }
 
+/* Recording controls layout - Modified for 3 buttons */
 .recording-controls {
     display: flex;
     flex-wrap: wrap;
-    gap: clamp(12px, 3vw, 20px);
+    gap: clamp(10px, 2vw, 15px);
     margin-bottom: clamp(20px, 4vw, 30px);
 }
 
 .recording-controls .btn {
-    min-width: min(150px, 100%);
+    min-width: min(130px, 100%);
+    flex: 1;
 }
 
 /* Audio Visualizer - Full Width */
@@ -748,6 +750,10 @@ body {
     
     .risk-value {
         font-size: 2rem;
+    }
+    
+    .recording-controls .btn {
+        min-width: 100%;
     }
 }
 
